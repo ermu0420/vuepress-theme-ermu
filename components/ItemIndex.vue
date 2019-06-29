@@ -8,7 +8,7 @@
 
         <div class="time-line">
             <ul class="posts-list">
-                <li class="posts-list-item"  v-for="(item, i) in posts" :key="item.title" v-if="item.frontmatter.status === 'push'">
+                <li class="posts-list-item"  v-for="(item, i) in posts" :key="item.title">
                     <div class="posts-content">
                         <span class="posts-list-meta">{{ item.frontmatter.createDate.substr(0,10) }}</span>
                         <NavLink
@@ -38,7 +38,7 @@
                return this.$site.pages.filter(value => {
                     return value.frontmatter.category === this.$page.frontmatter.category && !value.frontmatter.itemIndex;
                 }).sort((prev, next) =>{
-                   return prev.frontmatter.createDate - next.frontmatter.createDate > 0 ? -1 : 1;
+                   return new Date(prev.frontmatter.createDate).getTime() - new Date(next.frontmatter.createDate).getTime() > 0 ? -1 : 1;
                });
             }
         },
@@ -66,7 +66,6 @@
         max-width $contentWidth
         padding 2rem
         margin 0px auto
-        margin-bottom $footerHeight
     .posts-list
         list-style-type none
         margin 20px 0 20px 120px

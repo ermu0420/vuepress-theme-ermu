@@ -2,26 +2,26 @@
   <main class="page">
     <slot name="top"/>
 
-    <Content/>
+    <div v-if="$page.frontmatter.pageIndex">
+      <div v-for="item in sidebarItems">
+        <h2>{{item.title}}</h2>
+        <ul>
+          <li v-for="children in item.children">
+            <router-link class="nav-link" :to="children.path">{{ children.title }}</router-link>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <Content v-else class="theme-default-content" />
 
     <footer class="page-edit">
-      <div
-        class="edit-link"
-        v-if="editLink"
-      >
-        <a
-          :href="editLink"
-          target="_blank"
-          rel="noopener noreferrer"
-        >{{ editLinkText }}</a>
-        <OutboundLink/>
+      <div class="edit-link" v-if="editLink">
+        <a :href="editLink" target="_blank" rel="noopener noreferrer">{{ editLinkText }}</a>
+        <OutboundLink />
       </div>
 
-      <div
-        class="last-updated"
-        v-if="lastUpdated"
-      >
-        <span class="prefix">{{ lastUpdatedText }}: </span>
+      <div class="last-updated" v-if="lastUpdated && !$page.frontmatter.pageIndex">
+        <span class="prefix">{{ lastUpdatedText }}:</span>
         <span class="time">{{ lastUpdated }}</span>
       </div>
     </footer>
@@ -57,11 +57,8 @@
       </p>
     </div>
 
-    <div v-if="$site.themeConfig.Vssue" class="vssue-class">
-      <VssueComponent
-          :title="$page.title"
-          :options="options"
-      />
+    <div v-if="$site.themeConfig.Vssue && !$page.frontmatter.pageIndex" class="vssue-class">
+      <VssueComponent :title="$page.title" :options="options" />
     </div>
 
     <slot name="bottom"/>
@@ -69,75 +66,81 @@
 </template>
 
 <script>
-import { resolvePage, outboundRE, endingSlashRE } from '../util'
-import {VssueComponent} from 'vssue'
-import GithubV3 from '@vssue/api-github-v3'
-import 'vssue/dist/vssue.css'
+import { resolvePage, outboundRE, endingSlashRE } from "../util";
+import { VssueComponent } from "vssue";
+import GithubV3 from "@vssue/api-github-v3";
+import "vssue/dist/vssue.css";
 
 export default {
-  components: {  VssueComponent },
-  props: ['sidebarItems'],
+  components: { VssueComponent },
+  props: ["sidebarItems"],
 
   computed: {
-    lastUpdated () {
-      return this.$page.lastUpdated
+    lastUpdated() {
+      return this.$page.lastUpdated;
     },
 
-    lastUpdatedText () {
-      if (typeof this.$themeLocaleConfig.lastUpdated === 'string') {
-        return this.$themeLocaleConfig.lastUpdated
+    lastUpdatedText() {
+      if (typeof this.$themeLocaleConfig.lastUpdated === "string") {
+        return this.$themeLocaleConfig.lastUpdated;
       }
-      if (typeof this.$site.themeConfig.lastUpdated === 'string') {
-        return this.$site.themeConfig.lastUpdated
+      if (typeof this.$site.themeConfig.lastUpdated === "string") {
+        return this.$site.themeConfig.lastUpdated;
       }
-      return 'Last Updated'
+      return "Last Updated";
     },
 
-    prev () {
-      const prev = this.$page.frontmatter.prev
+    prev() {
+      const prev = this.$page.frontmatter.prev;
       if (prev === false) {
-        return
+        return;
       } else if (prev) {
-        return resolvePage(this.$site.pages, prev, this.$route.path)
+        return resolvePage(this.$site.pages, prev, this.$route.path);
       } else {
-        return resolvePrev(this.$page, this.sidebarItems)
+        return resolvePrev(this.$page, this.sidebarItems);
       }
     },
 
-    next () {
-      const next = this.$page.frontmatter.next
+    next() {
+      const next = this.$page.frontmatter.next;
       if (next === false) {
-        return
+        return;
       } else if (next) {
-        return resolvePage(this.$site.pages, next, this.$route.path)
+        return resolvePage(this.$site.pages, next, this.$route.path);
       } else {
-        return resolveNext(this.$page, this.sidebarItems)
+        return resolveNext(this.$page, this.sidebarItems);
       }
     },
 
-    editLink () {
+    editLink() {
       if (this.$page.frontmatter.editLink === false) {
-        return
+        return;
       }
       const {
         repo,
         editLinks,
-        docsDir = '',
-        docsBranch = 'master',
+        docsDir = "",
+        docsBranch = "master",
         docsRepo = repo
-      } = this.$site.themeConfig
+      } = this.$site.themeConfig;
 
       if (docsRepo && editLinks && this.$page.relativePath) {
-        return this.createEditLink(repo, docsRepo, docsDir, docsBranch, this.$page.relativePath)
+        return this.createEditLink(
+          repo,
+          docsRepo,
+          docsDir,
+          docsBranch,
+          this.$page.relativePath
+        );
       }
     },
 
-    editLinkText () {
+    editLinkText() {
       return (
-        this.$themeLocaleConfig.editLinkText
-        || this.$site.themeConfig.editLinkText
-        || `Edit this page`
-      )
+        this.$themeLocaleConfig.editLinkText ||
+        this.$site.themeConfig.editLinkText ||
+        `Edit this page`
+      );
     },
 
     options() {
@@ -148,7 +151,7 @@ export default {
       }
       let gitalkConf = this.$site.themeConfig.gitalk[_env];
       let labels = [];
-      labels.push(this.$page.path)
+      labels.push(this.$page.path);
       gitalkConf.labels = labels;
       gitalkConf.api = GithubV3;
       return gitalkConf;
@@ -221,6 +224,7 @@ function flatten (items, res) {
 @require '../styles/wrapper.styl'
 
 .page
+  padding-bottom 2rem
   display block
 
 .page-edit
@@ -255,9 +259,6 @@ function flatten (items, res) {
     overflow auto // clear float
   .next
     float right
-.vssue-class
-  max-width $contentWidth
-  margin 0 auto
 
 @media (max-width: $MQMobile)
   .page-edit

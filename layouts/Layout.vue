@@ -16,6 +16,7 @@
     ></div>
 
     <Sidebar
+      v-if="shouldShowSidebar"
       :items="sidebarItems"
       @toggle-sidebar="toggleSidebar"
     >
@@ -29,11 +30,11 @@
       />
     </Sidebar>
 
-    <Footer v-if="$site.themeConfig.footer" />
-
     <Home v-if="$page.frontmatter.home"/>
 
     <ItemIndex v-else-if="$page.frontmatter.itemIndex"/>
+
+    <Archives v-else-if="$page.frontmatter.archives"/>
 
     <Page
       v-else
@@ -48,6 +49,8 @@
         slot="bottom"
       />
     </Page>
+
+    <Footer v-if="$site.themeConfig.footer && $page.frontmatter.home" />
   </div>
 </template>
 
@@ -58,10 +61,11 @@ import Page from '@theme/components/Page.vue'
 import Sidebar from '@theme/components/Sidebar.vue'
 import Footer from '@theme/components/Footer.vue'
 import ItemIndex from '@theme/components/ItemIndex.vue'
+import Archives from "@theme/components/Archives";
 import { resolveSidebarItems } from '../util'
 
 export default {
-  components: { Home, Page, Sidebar, Navbar,Footer,ItemIndex },
+  components: {Archives, Home, Page, Sidebar, Navbar,Footer,ItemIndex },
 
   data () {
     return {
@@ -151,4 +155,5 @@ export default {
   }
 }
 </script>
+
 <style src="prismjs/themes/prism-tomorrow.css"></style>
