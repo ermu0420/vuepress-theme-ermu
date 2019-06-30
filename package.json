@@ -1,6 +1,6 @@
 {
   "name": "vuepress-theme-ermu",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "vuepress博客主题",
   "private": false,
   "main": "index.js",
@@ -21,14 +21,15 @@
   "homepage": "https://github.com/ermu0420/vuepress-theme-ermu#readme",
   "dependencies": {
     "@vssue/api-github-v3": "^0.9.0",
-    "element-ui": "^2.5.0",
-    "font-awesome": "4.7.0",
     "@vuepress/plugin-active-header-links": "^1.0.2",
     "@vuepress/plugin-nprogress": "^1.0.2",
     "@vuepress/plugin-search": "^1.0.2",
     "docsearch.js": "^2.5.2",
+    "element-ui": "^2.5.0",
+    "font-awesome": "4.7.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
+    "vssue": "^0.9.1",
     "vuepress-plugin-container": "^2.0.0"
   }
 }
