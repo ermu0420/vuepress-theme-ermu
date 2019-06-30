@@ -1,6 +1,6 @@
 {
   "name": "vuepress-theme-ermu",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "vuepress博客主题",
   "private": false,
   "main": "index.js",
