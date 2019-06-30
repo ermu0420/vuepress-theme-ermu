@@ -2,7 +2,7 @@
   <main class="page">
     <slot name="top"/>
 
-    <div v-if="$page.frontmatter.pageIndex">
+    <div v-if="$page.frontmatter.pageIndex" class="theme-default-content">
       <div v-for="item in sidebarItems">
         <h2>{{item.title}}</h2>
         <ul>
